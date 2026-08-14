@@ -13,13 +13,20 @@ Next.js 16 (App Router) + Supabase Auth 스타터 킷. `supabase-ssr`로 쿠키 
 ## 자주 쓰는 명령어
 
 ```bash
-npm run dev          # 개발 서버 (next dev)
-npm run build         # 프로덕션 빌드
-npm run start          # 프로덕션 서버 실행
-npm run lint            # ESLint 검사 (eslint .)
+npm run dev            # 개발 서버 (next dev)
+npm run build           # 프로덕션 빌드
+npm run start            # 프로덕션 서버 실행
+npm run lint              # ESLint 검사 (eslint .)
+npm run typecheck          # TypeScript 타입 검사 (tsc --noEmit)
+npm run format               # Prettier로 전체 포맷팅
+npm run format:check          # Prettier 포맷 검사만 수행 (수정 없음)
 ```
 
 단일 테스트 실행용 스크립트나 테스트 프레임워크는 아직 구성되어 있지 않다.
+
+### 커밋 시 자동 실행되는 검사
+
+Husky pre-commit 훅(`.husky/pre-commit`)이 `lint-staged`를 실행한다. 스테이징된 `*.{js,jsx,ts,tsx}` 파일에는 `eslint --fix` + `prettier --write`가, `*.{json,md,css}` 파일에는 `prettier --write`가 자동 적용된다 (`package.json`의 `lint-staged` 필드 참고). 커밋 전에 수동으로 `npm run lint`나 `npm run format`을 돌릴 필요는 없지만, 타입 에러는 훅이 잡지 않으므로 필요 시 `npm run typecheck`를 별도로 실행할 것.
 
 ## 아키텍처
 
@@ -69,7 +76,30 @@ Next 16에서는 `params`, `searchParams`, `cookies()`, `headers()`의 동기 �
 - `docs/nextjs-16.md` — Next.js 16 breaking change 전반 (Proxy 전환, async API, Typed Routes, Cache Components)
 
 핵심 공통 규칙:
+
 - Server Components가 기본값. `'use client'`는 상태/이벤트 핸들러가 실제로 필요할 때만 최소 범위로 적용
 - Pages Router 패턴(`pages/`, `getServerSideProps`, `getStaticProps`) 사용 금지
 - 시맨틱 Tailwind 색상 변수 사용, 하드코딩된 색상(`bg-white`, `text-gray-900` 등) 금지
+- ESLint(`eslint-config-next` + `eslint-config-prettier`)와 Prettier(`prettier-plugin-tailwindcss`로 클래스명 자동 정렬)를 함께 사용하므로, 포맷은 Prettier에 맡기고 ESLint 규칙과 충돌하는 수동 포맷팅을 하지 말 것
 - shadcn/ui 컴포넌트 추가는 `npx shadcn@latest add [component-name]`
+
+## MCP 서버 구성 (`.mcp.json`)
+
+- `supabase` — 원격 Supabase 프로젝트(`project_ref=hncdzcfrywkqydslkmkm`)와 직접 통신. 스키마 조회, 마이그레이션 적용, 타입 생성 등에 사용
+- `context7` — 라이브러리/프레임워크 최신 문서 조회
+- `playwright` — 브라우저 자동화 (E2E 테스트, UI 동작 확인)
+- `shadcn` — shadcn/ui 레지스트리 조회 및 컴포넌트 추가 명령 생성
+- `sequential-thinking` — 복잡한 다단계 추론 보조
+- `shrimp-task-manager` — 로컬 작업 계획/추적 도구, 데이터는 `shrimp_data/`에 저장 (git 추적 제외)
+
+## 서브에이전트 (`.claude/agents/`)
+
+이 저장소는 도메인별 전문 서브에이전트를 구성해 두었다. 관련 작업을 위임할 때 참고:
+
+- `dev/nextjs-app-developer` — 라우팅/레이아웃 등 App Router 구조 설계
+- `dev/ui-markup-specialist` — 정적 마크업·스타일링 전용 (비즈니스 로직 제외)
+- `dev/code-reviewer` — 작성/수정된 코드에 대한 한국어 코드 리뷰
+- `dev/starter-cleaner` — 스타터킷 보일러플레이트 제거 및 초기화
+- `dev/development-planner` — `ROADMAP.md` 작성/갱신
+- `docs/prd-generator`, `docs/prd-validator` — PRD 작성 및 기술 타당성 검증
+- `notion-api-database-expert` — Notion API 연동 작업
