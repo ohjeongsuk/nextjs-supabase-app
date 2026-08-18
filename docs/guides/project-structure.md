@@ -165,14 +165,14 @@ user_settings/         # snake_case (금지)
 
 ```typescript
 // ✅ 경로 별칭 사용 (권장)
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { createClient } from '@/lib/supabase/server'
-import { LoginForm } from '@/components/login-form'
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/server";
+import { LoginForm } from "@/components/login-form";
 
 // ❌ 상대 경로 사용 (금지)
-import { Button } from '../../components/ui/button'
-import { cn } from '../../lib/utils'
+import { Button } from "../../components/ui/button";
+import { cn } from "../../lib/utils";
 ```
 
 **📍 정의된 별칭 (`components.json` 기준):**
@@ -239,15 +239,15 @@ lib/supabase/           # Supabase 관련은 이 폴더에 추가
 
 ```typescript
 // 1. 외부 라이브러리
-import { useState } from 'react'
-import Link from 'next/link'
+import { useState } from "react";
+import Link from "next/link";
 
 // 2. 내부 라이브러리 (@/ 경로)
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 // 3. 상대 경로
-import './component.css'
+import "./component.css";
 ```
 
 ### 3. Export 규칙
@@ -261,7 +261,7 @@ export default function LoginPage() {}
 
 // ❌ 혼재 사용 지양
 export function LoginForm() {}
-export default LoginForm // 같은 컴포넌트를 두 방식으로 export
+export default LoginForm; // 같은 컴포넌트를 두 방식으로 export
 ```
 
 ### 4. 파일 크기 관리
@@ -295,11 +295,11 @@ export function SuperMegaComponent() {
 }
 
 // 혼재된 import
-import Button from '@/components/ui/button' // default
-import { Card } from '@/components/ui/card' // named
+import Button from "@/components/ui/button"; // default
+import { Card } from "@/components/ui/card"; // named
 
 // 깊은 상대 경로
-import { utils } from '../../../../lib/utils'
+import { utils } from "../../../../lib/utils";
 ```
 
 ## ✅ 체크리스트
