@@ -43,3 +43,9 @@ next-env.d.ts
 
 # shrimp-task-manager MCP 런타임 데이터
 /shrimp_data/
+
+# Playwright MCP 디버그 로그/스냅샷
+/.playwright-mcp/
+
+# Claude Code plan mode 세션 계획 파일
+/.claude/plans/
