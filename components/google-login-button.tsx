@@ -17,12 +17,12 @@ export function GoogleLoginButton() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/protected`,
+          redirectTo: `${window.location.origin}/auth/callback?next=/events`,
         },
       });
       if (error) throw error;
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(error instanceof Error ? error.message : "오류가 발생했습니다");
       setIsLoading(false);
     }
   };
@@ -54,7 +54,7 @@ export function GoogleLoginButton() {
             fill="#EA4335"
           />
         </svg>
-        {isLoading ? "Redirecting..." : "Continue with Google"}
+        {isLoading ? "이동 중..." : "Google로 시작하기"}
       </Button>
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
