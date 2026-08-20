@@ -47,12 +47,13 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
   - ✅ 관리자 사이드바 레이아웃 구조 설정 (`components/admin-sidebar.tsx`)
   - ⚠️ **후속 조치 필요 (Task 008에서 처리)**: `proxy.ts`의 인증 리다이렉트 예외 목록(`/`, `/login`, `/auth/*`)이 `/join/[invite_code]`와 `/admin/login`을 포함하지 않아, 비로그인 사용자가 초대 미리보기 및 관리자 로그인 페이지 자체에 접근할 수 없는 상태. PRD 요구사항과 충돌하므로 인증 시스템 구현 시 예외 경로 추가 필요.
 
-- **Task 002: 타입 정의 및 인터페이스 설계**
-  - TypeScript 인터페이스 및 타입 정의 파일 생성
-  - 프론트엔드 컴포넌트 Props 타입 정의
-  - API 응답 타입 정의
-  - 전역 상태 관리 타입 정의
-  - UI 컴포넌트용 임시 데이터 모델 타입 정의 (추후 DB 스키마로 교체 예정)
+- **Task 002: 타입 정의 및 인터페이스 설계** - ✅ 완료 (2026-08-20)
+  - ✅ TypeScript 인터페이스 및 타입 정의 파일 생성 (`lib/types/domain.ts`)
+  - ✅ 프론트엔드 컴포넌트 Props 타입 정의 (`lib/types/ui.ts` — 공유 상태 타입, 컴포넌트별 Props는 Task 003 이후 개별 정의)
+  - ✅ API 응답 타입 정의 (`lib/types/api.ts`)
+  - ✅ 전역 상태 관리 타입 정의 (`lib/types/ui.ts`의 필터·페이지네이션·정렬 타입)
+  - ✅ UI 컴포넌트용 임시 데이터 모델 타입 정의 (`lib/types/domain.ts` — Task 007에서 `lib/supabase/types.ts` 기반으로 교체 예정)
+  - ✅ 폼 입력값 타입 정의 (`lib/types/forms.ts` — Task 004에서 Zod 스키마 연동 예정)
 
 ### Phase 2: UI/UX 완성 (더미 데이터 활용)
 
