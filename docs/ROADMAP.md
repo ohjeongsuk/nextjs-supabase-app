@@ -57,13 +57,15 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
 
 ### Phase 2: UI/UX 완성 (더미 데이터 활용)
 
-- **Task 003: 공통 컴포넌트 라이브러리 구현**
-  - shadcn/ui 추가 컴포넌트 설치 (Card, Avatar, Dialog, Toast, Form, Select)
-  - 이벤트 카드 컴포넌트 구현
-  - 참여자 프로필 카드 컴포넌트 구현
-  - 로딩 스켈레톤 컴포넌트 구현
-  - 빈 상태 UI 컴포넌트 구현
-  - 더미 데이터 생성 및 관리 유틸리티 작성
+- **Task 003: 공통 컴포넌트 라이브러리 구현** - ✅ 완료 (2026-08-20)
+  - ✅ shadcn/ui 추가 컴포넌트 설치 (Avatar, Dialog, Form, Select, Skeleton, Sonner — Card는 Task 001에서 기설치)
+  - ✅ 이벤트 카드 컴포넌트 구현 (`components/event-card.tsx`)
+  - ✅ 참여자 프로필 카드 컴포넌트 구현 (`components/participant-card.tsx`)
+  - ✅ 로딩 스켈레톤 컴포넌트 구현 (`components/loading-skeletons.tsx`)
+  - ✅ 빈 상태 UI 컴포넌트 구현 (`components/empty-state.tsx`)
+  - ⚠️ **후속 조치**: 더미 데이터 생성 유틸리티는 컴포넌트 시각 검증용으로 임시 작성 후 삭제함 — Task 004에서 페이지 UI 구현 시 `lib/mock/`에 정식으로 재작성 필요
+  - ⚠️ **후속 조치**: `next.config.ts`에 `images.remotePatterns` 미설정 — Task 007에서 Supabase Storage(`event-covers`) 도메인 확정 시 `next/image` 사용을 위해 추가 필요
+  - ℹ️ 브라우저 시각 검증은 `proxy.ts` 인증 리다이렉트로 인해 생략, `typecheck`/`lint`로만 검증함
 
 - **Task 004: 주최자 모바일 UI/UX 완성**
   - 홈 페이지 (랜딩) UI 구현 (F001)
