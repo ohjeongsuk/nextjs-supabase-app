@@ -1,5 +1,6 @@
 import type {
   EventStatus,
+  EventWithHost,
   EventWithParticipants,
   ParticipantWithUser,
   User,
@@ -129,8 +130,34 @@ export const mockEvents: EventWithParticipants[] = mockEventInputs.map(
   },
 );
 
-export function getMockEventById(id: string) {
-  return mockEvents.find((event) => event.id === id);
+interface MockEventDetail extends EventWithHost {
+  participants: ParticipantWithUser[];
+  participant_count: number;
+}
+
+export function getMockEventById(id: string): MockEventDetail | undefined {
+  const input = mockEventInputs.find((event) => event.id === id);
+  if (!input) return undefined;
+
+  const participants = createParticipants(input.id, input.participantCount);
+  const host = mockUsers.find((user) => user.id === input.createdBy)!;
+
+  return {
+    id: input.id,
+    title: input.title,
+    description: input.description,
+    location: input.location,
+    event_date: input.event_date,
+    cover_image_url: null,
+    invite_code: input.id,
+    status: input.status,
+    created_by: input.createdBy,
+    created_at: "2026-07-01T00:00:00.000Z",
+    updated_at: "2026-07-01T00:00:00.000Z",
+    host,
+    participants,
+    participant_count: participants.length,
+  };
 }
 
 export const mockParticipants: ParticipantWithUser[] = createParticipants(
