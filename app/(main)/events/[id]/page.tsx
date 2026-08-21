@@ -5,7 +5,9 @@ import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
 import { EventHostActions } from "@/components/event-host-actions";
 import { InviteShareButton } from "@/components/invite-share-button";
+import { ParticipantListSkeleton } from "@/components/loading-skeletons";
 import { ParticipantsSection } from "@/components/participants-section";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getEventById } from "@/lib/queries/events";
 import { createClient } from "@/lib/supabase/server";
 import type { EventStatus } from "@/lib/types";
@@ -15,6 +17,26 @@ const statusLabels: Record<EventStatus, string> = {
   ongoing: "진행 중",
   ended: "종료",
 };
+
+function EventDetailSkeleton() {
+  return (
+    <div className="pb-6">
+      <Skeleton className="aspect-video w-full rounded-none" />
+      <div className="space-y-6 p-4">
+        <div className="space-y-2">
+          <Skeleton className="h-7 w-2/3" />
+          <Skeleton className="h-4 w-1/2" />
+          <Skeleton className="h-4 w-1/3" />
+        </div>
+        <Skeleton className="h-11 w-full" />
+        <div>
+          <Skeleton className="mb-2 h-5 w-24" />
+          <ParticipantListSkeleton />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -38,7 +60,7 @@ async function EventDetailContent({ params }: Props) {
 
   return (
     <div className="pb-6">
-      <div className="relative aspect-video w-full bg-muted">
+      <div className="bg-muted relative aspect-video w-full">
         {event.cover_image_url ? (
           <Image
             src={event.cover_image_url}
@@ -47,19 +69,19 @@ async function EventDetailContent({ params }: Props) {
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground">
+          <div className="text-muted-foreground flex h-full items-center justify-center">
             <CalendarDays className="size-10" />
           </div>
         )}
-        <Badge className="absolute right-3 top-3">
+        <Badge className="absolute top-3 right-3">
           {statusLabels[event.status]}
         </Badge>
       </div>
 
       <div className="space-y-6 p-4">
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-foreground">{event.title}</h1>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <h1 className="text-foreground text-2xl font-bold">{event.title}</h1>
+          <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
             <CalendarDays className="size-4 shrink-0" />
             <span>
               {eventDate.toLocaleString("ko-KR", {
@@ -71,12 +93,12 @@ async function EventDetailContent({ params }: Props) {
               })}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
             <MapPin className="size-4 shrink-0" />
             <span>{event.location}</span>
           </div>
           {event.description && (
-            <p className="whitespace-pre-wrap pt-2 text-sm text-foreground">
+            <p className="text-foreground pt-2 text-sm whitespace-pre-wrap">
               {event.description}
             </p>
           )}
@@ -97,7 +119,7 @@ async function EventDetailContent({ params }: Props) {
 
 export default function EventDetailPage({ params }: Props) {
   return (
-    <Suspense>
+    <Suspense fallback={<EventDetailSkeleton />}>
       <EventDetailContent params={params} />
     </Suspense>
   );
