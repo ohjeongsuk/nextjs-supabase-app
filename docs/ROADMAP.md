@@ -157,13 +157,17 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
   - ⚠️ **발견한 결함(수정 완료)**: `event_participants`의 `REPLICA IDENTITY`가 기본값(PK만 포함)이라 Realtime DELETE 이벤트가 `event_id` 기준 서버 필터를 통과하지 못해 드롭되던 문제 — `REPLICA IDENTITY FULL`로 전환해 해결
   - ⚠️ **미검증 항목**: 실제 2번째 Google 계정으로의 참여 클릭 플로우와 비로그인 OAuth 리다이렉트는 테스트 계정 제약으로 DB 직접 조작으로 대체 검증함
 
-- **Task 011: 관리자 대시보드 백엔드 구현**
-  - 대시보드 지표 집계 쿼리 구현 (F012)
-  - 이벤트 관리 테이블 검색/필터/삭제 API 구현 (F013)
-  - 사용자 관리 테이블 검색/필터/삭제 API 구현 (F014)
-  - 통계 데이터 집계 및 그래프 데이터 API 구현 (F015)
-  - 페이지네이션 및 정렬 로직 구현
-  - Playwright MCP를 활용한 관리자 기능 통합 테스트
+- **Task 011: 관리자 대시보드 백엔드 구현** ✅ - 완료 (2026-08-21) — 상세 명세서: `docs/tasks/task-011-admin-backend.md`
+  - ✅ 대시보드 지표 집계 쿼리 구현 (F012) — `lib/queries/admin.ts`의 `getDashboardMetrics`
+  - ✅ 이벤트 관리 테이블 삭제 API 구현 (F013) — `deleteEventAsAdmin`, 검색/필터는 Task 006에서 이미 클라이언트 사이드로 구현되어 있어 서버는 전체 목록만 제공
+  - ✅ 사용자 관리 테이블 삭제 API 구현 (F014) — `deleteUserAsAdmin`, `auth.admin.deleteUser()`로 `auth.users`/`profiles`/`event_participants` 연쇄 삭제
+  - ✅ 통계 데이터 집계 및 그래프 데이터 API 구현 (F015) — `getAnalyticsSummary(period)`, 기간(7/30/90일) 변경 시 `fetchAnalyticsSummary` 액션으로 실시간 재조회
+  - ⚠️ **페이지네이션/정렬 로직**: 이번 범위에서 제외 — 기존 UI가 클라이언트 사이드 검색/필터를 이미 완비했고 초기 데이터 규모상 전체 목록 조회로 충분하다고 판단, 데이터 증가 시 후속 Task로 분리
+  - ✅ Claude in Chrome을 활용한 관리자 기능 통합 테스트 — admin 계정 부재로 기존 계정을 SQL로 임시 승격해 대시보드/이벤트 삭제/사용자 목록/통계 기간 재조회/원복 후 접근 거부 회귀까지 검증
+  - ⚠️ **핵심 아키텍처 결정**: 이메일은 `auth.users`에만 있고 `public.profiles`에는 없어, `service_role` 키를 쓰는 서버 전용 Admin 클라이언트(`lib/supabase/admin.ts`)를 신규 도입. `.env.local`에 `SUPABASE_SERVICE_ROLE_KEY` 추가(사용자가 Supabase 대시보드에서 직접 발급). RLS를 우회하는 클라이언트이므로 모든 관리자 액션 진입점에서 `requireAdmin()`으로 재검증
+  - ⚠️ **범위 확장(빌드 차단 결함 수정)**: `npm run build` 중 관리자 라우트 4개 전체가 prerender 단계에서 실패하는 것을 발견. 원인은 `app/(admin-dashboard)/layout.tsx`(Task 008 작성분, 이번 세션 변경 아님)가 `cookies()`를 `<Suspense>` 밖에서 호출하던 기존 결함 — 레이아웃의 인증 체크를 `RequireAdmin` 서브컴포넌트로 분리해 `<Suspense>`로 감싸 해결. 이 수정 없이는 Task 011 범위와 무관하게 프로덕션 빌드 자체가 불가능한 상태였음
+  - ⚠️ **정리**: 더 이상 참조되지 않는 `lib/mock/admin.ts`, `lib/mock/events.ts` 삭제
+  - ⚠️ **미검증 항목**: 실제 사용자 삭제(`auth.admin.deleteUser`) 실행은 DB의 유일한 후보 계정이 실사용자 이메일로 가입된 계정이라 데이터 보존을 위해 보류, 코드 리뷰로 로직만 검증함
 
 - **Task 012: 핵심 기능 통합 테스트**
   - Playwright MCP를 사용한 전체 사용자 플로우 테스트
