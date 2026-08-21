@@ -202,13 +202,14 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
   - 🐛 **발견 및 해결한 문제**: `opengraph-image.tsx`가 dev 서버에서 "Empty reply from server"로 크래시하던 문제 — 처음엔 한글 폰트(Satori 기본 폰트 미지원) 문제로 보고 영문 태그라인으로 교체했으나 재현됨. dev 서버 프로세스를 완전 종료 후 재시작하니 정상 동작(200, 유효한 PNG) 확인 — 실제 원인은 코드가 아닌 누적된 dev 서버 프로세스 상태(메모리 1.5GB 이상 사용 중이던 좀비 상태)였던 것으로 판단
   - ✅ typecheck/build 통과 확인. lint는 이번 세션 미수정 파일(`components/theme-switcher.tsx`, 스타터킷 원본)의 `react-hooks/set-state-in-effect` 위반 1건이 있으나 Task 014 범위 밖 기존 이슈로 별도 처리 필요
 
-- **Task 015: 배포 및 모니터링**
-  - Vercel 프로젝트 설정 및 환경 변수 구성
-  - CI/CD 파이프라인 구축
-  - 에러 모니터링 시스템 설정 (Sentry)
-  - 분석 도구 설정 (Google Analytics)
-  - 프로덕션 배포 및 도메인 연결
-  - 배포 후 통합 테스트 수행
+- **Task 015: 배포 및 모니터링** ⏸️ - 코드/설정 준비 완료, 실배포는 사용자 콘솔 작업 대기 (2026-08-21) — 상세 명세서: `docs/tasks/task-015-deployment.md`
+  - ✅ Vercel 프로젝트 설정 및 환경 변수 구성 — `vercel.json`, `.env.example` 작성. 실제 Vercel 계정 로그인·프로젝트 Import·환경변수 등록은 콘솔 작업이라 사용자 확인(2가지 질문에 응답 없어 각각 권장 옵션으로 진행: "코드/설정만 먼저 준비", Sentry SDK 설치, GA 코드 골격 준비)에 따라 이번 세션 범위에서 제외
+  - ✅ CI/CD 파이프라인 구축 — `.github/workflows/ci.yml`(lint/typecheck/build 자동 검증)만 구축. 실배포(CD)는 Vercel의 GitHub 연동이 대신 담당하는 구조라 별도 배포 워크플로우는 만들지 않기로 결정
+  - ✅ 에러 모니터링 시스템 설정 (Sentry) — `@sentry/nextjs` 설치 및 SDK 초기화 코드 작성 완료. Context7로 최신 문서 확인 결과 App Router 매뉴얼 설정 파일명이 구버전 `sentry.client.config.ts`가 아닌 `instrumentation-client.ts`로 바뀐 것을 확인해 반영. `NEXT_PUBLIC_SENTRY_DSN` 미설정 시 비활성화되도록 가드 처리, 실제 DSN 발급 및 등록은 사용자의 Sentry 계정 생성 이후
+  - ✅ 분석 도구 설정 (Google Analytics) — `@next/third-parties`(Next.js 16.3.0과 버전 맞춤) 설치, `NEXT_PUBLIC_GA_MEASUREMENT_ID` 있을 때만 스크립트가 삽입되도록 조건부 렌더링 구현 및 curl로 미삽입 확인. 실제 측정 ID 발급은 사용자의 GA 계정 생성 이후
+  - ⏸️ **미착수(계정 필요)**: 프로덕션 배포 및 도메인 연결, 배포 후 통합 테스트 — Vercel/Sentry/GA 계정 생성 및 GitHub Secrets 등록이 선행되어야 하는 작업. `docs/deployment.md`에 6단계(Vercel 배포/CI Secrets/Sentry/GA/커스텀 도메인/배포 후 Lighthouse 측정)로 안내 작성, 사용자가 콘솔 작업 완료 후 다음 세션에서 이어서 진행
+  - ⚠️ **발견 사항**: `@sentry/cli`의 postinstall 스크립트(소스맵 업로드용 바이너리 다운로드)가 npm 기본 보안 정책으로 차단됨 — 이번 세션은 소스맵 업로드가 필요한 실배포가 없어 사용자 확인(응답 없어 권장 옵션대로 미승인)에 따라 보류. 추후 실제 배포 시 필요하면 `npm approve-scripts @sentry/cli`로 별도 승인 필요
+  - ✅ typecheck/build 통과 확인 (Sentry/GA 환경변수 미설정 상태에서도 정상 빌드됨을 검증). lint는 Task 014부터 남아있는 범위 밖 기존 이슈(`components/theme-switcher.tsx`) 1건 외 신규 이슈 없음
 
 ## 작업별 세부 사항
 
