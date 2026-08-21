@@ -49,3 +49,4 @@ next-env.d.ts
 
 # Claude Code plan mode 세션 계획 파일
 /.claude/plans/
+wisely.png
