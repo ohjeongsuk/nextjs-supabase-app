@@ -9,8 +9,8 @@ import type {
 const mockUsers: User[] = [
   {
     id: "user-1",
-    email: "sujin.kim@example.com",
-    name: "김수진",
+    email: "hayoon.jung@example.com",
+    name: "정하윤",
     avatar_url: null,
     role: "user",
     created_at: "2026-07-01T00:00:00.000Z",
@@ -18,8 +18,8 @@ const mockUsers: User[] = [
   },
   {
     id: "user-2",
-    email: "minho.lee@example.com",
-    name: "이민호",
+    email: "doyoon.kang@example.com",
+    name: "강도윤",
     avatar_url: null,
     role: "user",
     created_at: "2026-07-02T00:00:00.000Z",
@@ -27,8 +27,8 @@ const mockUsers: User[] = [
   },
   {
     id: "user-3",
-    email: "yuna.park@example.com",
-    name: "박유나",
+    email: "seoyeon.im@example.com",
+    name: "임서연",
     avatar_url: null,
     role: "user",
     created_at: "2026-07-03T00:00:00.000Z",
