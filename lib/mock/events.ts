@@ -41,6 +41,7 @@ export const currentMockUser = mockUsers[0];
 function createParticipants(
   eventId: string,
   count: number,
+  createdBy: string,
 ): ParticipantWithUser[] {
   return Array.from({ length: count }, (_, index) => {
     const user = mockUsers[index % mockUsers.length];
@@ -48,7 +49,7 @@ function createParticipants(
       id: `${eventId}-participant-${index}`,
       event_id: eventId,
       user_id: user.id,
-      role: index === 0 ? "host" : "participant",
+      role: user.id === createdBy ? "host" : "participant",
       joined_at: "2026-08-01T00:00:00.000Z",
       user,
     };
@@ -111,7 +112,11 @@ const mockEventInputs: MockEventInput[] = [
 
 export const mockEvents: EventWithParticipants[] = mockEventInputs.map(
   (input) => {
-    const participants = createParticipants(input.id, input.participantCount);
+    const participants = createParticipants(
+      input.id,
+      input.participantCount,
+      input.createdBy,
+    );
     return {
       id: input.id,
       title: input.title,
@@ -130,6 +135,20 @@ export const mockEvents: EventWithParticipants[] = mockEventInputs.map(
   },
 );
 
+// 내가 주최자(created_by)인 이벤트만 반환 (F007 주최자 뷰)
+export function getMockHostedEvents(userId: string): EventWithParticipants[] {
+  return mockEvents.filter((event) => event.created_by === userId);
+}
+
+// 내가 참여자로 등록된 이벤트만 반환, 주최한 이벤트는 제외 (F007 참여자 뷰)
+export function getMockJoinedEvents(userId: string): EventWithParticipants[] {
+  return mockEvents.filter(
+    (event) =>
+      event.created_by !== userId &&
+      event.participants.some((participant) => participant.user_id === userId),
+  );
+}
+
 interface MockEventDetail extends EventWithHost {
   participants: ParticipantWithUser[];
   participant_count: number;
@@ -139,7 +158,11 @@ export function getMockEventById(id: string): MockEventDetail | undefined {
   const input = mockEventInputs.find((event) => event.id === id);
   if (!input) return undefined;
 
-  const participants = createParticipants(input.id, input.participantCount);
+  const participants = createParticipants(
+    input.id,
+    input.participantCount,
+    input.createdBy,
+  );
   const host = mockUsers.find((user) => user.id === input.createdBy)!;
 
   return {
@@ -163,4 +186,5 @@ export function getMockEventById(id: string): MockEventDetail | undefined {
 export const mockParticipants: ParticipantWithUser[] = createParticipants(
   mockEventInputs[0].id,
   mockEventInputs[0].participantCount,
+  mockEventInputs[0].createdBy,
 );
