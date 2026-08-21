@@ -125,13 +125,14 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
   - ⚠️ **후속 조치**: `instruments` 테이블(스타터킷 튜토리얼 잔재)은 Gather와 무관하여 그대로 둠, 필요 시 이후 삭제
   - ⚠️ **후속 조치**: `next.config.ts`에 `event-covers` 버킷 도메인 `images.remotePatterns` 추가 완료 (Task 003 후속 조치 반영)
 
-- **Task 008: 인증 시스템 및 권한 관리**
-  - Google OAuth 로그인 플로우 완성 (F010)
-  - 사용자 프로필 자동 생성 로직 구현
-  - 관리자 권한 체크 미들웨어 구현 (role: admin)
-  - 보호된 라우트 접근 제어 구현
-  - 로그아웃 기능 구현
-  - Playwright MCP를 활용한 인증 플로우 E2E 테스트
+- **Task 008: 인증 시스템 및 권한 관리** ✅ - 완료 (2026-08-21)
+  - ✅ Google OAuth 로그인 플로우 완성 (F010) — `GoogleLoginButton`에 `next` prop 추가로 일반/관리자 로그인 목적지 분리
+  - ✅ 사용자 프로필 자동 생성 로직 구현 — Task 007의 `handle_new_user` 트리거로 이미 구현되어 있음을 확인
+  - ✅ 관리자 권한 체크 (role: admin) — Edge 미들웨어 대신 `(admin-dashboard)/layout.tsx`(Server Component)에서 `profiles.role` 조회로 체크. `proxy.ts`(Edge)는 JWT claims만 다루고 `profiles.role`을 포함하지 않아 이 계층에서 처리하는 게 더 안전하다고 판단
+  - ✅ 보호된 라우트 접근 제어 구현 — `proxy.ts`(미인증) + 레이아웃(role 불일치) 2단계 방어
+  - ✅ 로그아웃 기능 구현 — 기존 `LogoutButton`에 `redirectTo` prop 추가해 관리자 사이드바에서 재사용
+  - ✅ Playwright MCP를 활용한 인증 플로우 E2E 테스트 — `docs/testing/task-008-auth-flow-test.md`에 기록. Google OAuth 완주는 외부 서비스라 자동화 범위 밖, 리다이렉트/권한 분기 로직만 검증
+  - ⚠️ **미검증 항목**: `role: admin` 계정으로 관리자 페이지 정상 진입하는 성공 경로는 실제 관리자 계정 부재로 미검증 (role 불일치 거부 경로는 실계정으로 검증 완료)
 
 - **Task 009: 이벤트 CRUD 및 초대 시스템**
   - 이벤트 생성 API 구현 (F001)
