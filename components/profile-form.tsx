@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { LogoutButton } from "@/components/logout-button";
+import { updateProfile } from "@/lib/actions/profile";
 import {
   profileFormSchema,
   type ProfileFormSchema,
@@ -29,15 +30,19 @@ interface ProfileFormProps {
 
 export function ProfileForm({ user }: ProfileFormProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const displayName = user.name ?? "이름 없음";
 
   const form = useForm<ProfileFormSchema>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: { name: user.name },
+    defaultValues: { name: user.name ?? "" },
   });
 
   async function handleSubmit(values: ProfileFormSchema) {
-    // TODO(Task 008): 프로필 수정 API 연동
-    console.log("프로필 수정 요청", values);
+    const result = await updateProfile(values);
+    if (!result.success) {
+      toast.error(result.error);
+      return;
+    }
     toast.success("프로필이 수정되었어요");
     setIsEditing(false);
   }
@@ -52,9 +57,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
     <div className="space-y-6">
       <div className="flex flex-col items-center gap-3">
         <Avatar size="lg" className="size-20">
-          <AvatarImage src={user.avatar_url ?? undefined} alt={user.name} />
+          <AvatarImage src={user.avatar_url ?? undefined} alt={displayName} />
           <AvatarFallback className="text-xl">
-            {user.name.charAt(0)}
+            {displayName.charAt(0)}
           </AvatarFallback>
         </Avatar>
       </div>
@@ -84,7 +89,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 variant="outline"
                 className="flex-1"
                 onClick={() => {
-                  form.reset({ name: user.name });
+                  form.reset({ name: user.name ?? "" });
                   setIsEditing(false);
                 }}
               >
@@ -105,7 +110,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
           <div className="flex items-center justify-between rounded-md border p-3">
             <div>
               <p className="text-xs text-muted-foreground">이름</p>
-              <p className="text-foreground">{user.name}</p>
+              <p className="text-foreground">{displayName}</p>
             </div>
             <Button
               type="button"

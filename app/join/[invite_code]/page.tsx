@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { JoinEventCard } from "@/components/join-event-card";
-import { getMockEventById } from "@/lib/mock/events";
+import { getEventByInviteCode } from "@/lib/queries/events";
 
 type Props = {
   params: Promise<{ invite_code: string }>;
@@ -9,7 +9,7 @@ type Props = {
 
 async function JoinPageContent({ params }: Props) {
   const { invite_code } = await params;
-  const event = getMockEventById(invite_code);
+  const event = await getEventByInviteCode(invite_code).catch(() => null);
 
   if (!event) {
     notFound();

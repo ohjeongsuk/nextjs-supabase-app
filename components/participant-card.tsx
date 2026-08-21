@@ -13,16 +13,17 @@ export function ParticipantCard({
   className,
 }: ParticipantCardProps) {
   const { user, role } = participant;
+  const displayName = user.name ?? "이름 없음";
 
   return (
     <div className={cn("flex items-center gap-3 py-2", className)}>
       <Avatar>
-        <AvatarImage src={user.avatar_url ?? undefined} alt={user.name} />
-        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+        <AvatarImage src={user.avatar_url ?? undefined} alt={displayName} />
+        <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
       </Avatar>
       <div className="min-w-0 flex-1">
         <p className="line-clamp-1 text-sm font-medium text-foreground">
-          {user.name}
+          {displayName}
         </p>
         {role === "host" && (
           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">

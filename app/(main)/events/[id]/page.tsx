@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { EventHostActions } from "@/components/event-host-actions";
 import { InviteShareButton } from "@/components/invite-share-button";
 import { ParticipantCard } from "@/components/participant-card";
-import { currentMockUser, getMockEventById } from "@/lib/mock/events";
+import { getEventById } from "@/lib/queries/events";
+import { createClient } from "@/lib/supabase/server";
 import type { EventStatus } from "@/lib/types";
 
 const statusLabels: Record<EventStatus, string> = {
@@ -21,13 +22,18 @@ type Props = {
 
 async function EventDetailContent({ params }: Props) {
   const { id } = await params;
-  const event = getMockEventById(id);
+
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  const userId = data?.claims.sub;
+
+  const event = await getEventById(id).catch(() => null);
 
   if (!event) {
     notFound();
   }
 
-  const isHost = event.created_by === currentMockUser.id;
+  const isHost = event.created_by === userId;
   const eventDate = new Date(event.event_date);
 
   return (

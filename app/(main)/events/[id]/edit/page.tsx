@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { EditEventForm } from "@/components/edit-event-form";
-import { getMockEventById } from "@/lib/mock/events";
+import { getEventById } from "@/lib/queries/events";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -15,7 +15,7 @@ function toDatetimeLocalValue(isoString: string) {
 
 async function EditEventContent({ params }: Props) {
   const { id } = await params;
-  const event = getMockEventById(id);
+  const event = await getEventById(id).catch(() => null);
 
   if (!event) {
     notFound();

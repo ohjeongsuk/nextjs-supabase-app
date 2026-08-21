@@ -22,7 +22,7 @@ export const mockAdminEvents: AdminEventListItem[] = mockEvents.map((event) => {
   return {
     id: event.id,
     title: event.title,
-    host_name: host.name,
+    host_name: host.name ?? "이름 없음",
     event_date: event.event_date,
     participant_count: event.participant_count,
     status: event.status,
@@ -33,7 +33,7 @@ export const mockAdminEvents: AdminEventListItem[] = mockEvents.map((event) => {
 export const mockAdminUsers: AdminUserListItem[] = mockUsersList.map(
   (user) => ({
     id: user.id,
-    name: user.name,
+    name: user.name ?? "이름 없음",
     email: user.email,
     avatar_url: user.avatar_url,
     role: user.role,

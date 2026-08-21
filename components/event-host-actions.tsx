@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { deleteEvent } from "@/lib/actions/events";
 import {
   Dialog,
   DialogContent,
@@ -27,8 +28,12 @@ export function EventHostActions({ eventId }: EventHostActionsProps) {
 
   async function handleDelete() {
     setIsDeleting(true);
-    // TODO(Task 009): 이벤트 삭제 API 연동
-    console.log("이벤트 삭제 요청", eventId);
+    const result = await deleteEvent(eventId);
+    if (!result.success) {
+      toast.error(result.error);
+      setIsDeleting(false);
+      return;
+    }
     toast.success("이벤트가 삭제되었어요");
     router.push("/events");
   }
