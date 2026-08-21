@@ -179,13 +179,16 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
 
 ### Phase 4: 고급 기능 및 최적화
 
-- **Task 013: 사용자 경험 향상**
-  - Toast 알림 시스템 구현
-  - 로딩 상태 및 스켈레톤 UI 적용
-  - 에러 바운더리 및 404 페이지 구현
-  - 폼 유효성 검사 메시지 개선
-  - 터치 영역 최적화 (모바일 48px 이상)
-  - 무한 스크롤 또는 가상화 리스트 구현
+- **Task 013: 사용자 경험 향상** ✅ - 완료 (2026-08-21) — 상세 명세서: `docs/tasks/task-013-ux-improvements.md`
+  - ✅ Toast 알림 시스템 구현 — Task 003에서 Sonner 설치, 10개 파일에서 이미 사용 중이었음을 확인, 추가 작업 없음
+  - ✅ 로딩 상태 및 스켈레톤 UI 적용 — `/events`, `/events/[id]`, `/join/[invite_code]`, `/admin/events`, `/admin/users`에 스켈레톤 연결, 인위적 지연 재현으로 실제 렌더링 확인
+  - ✅ 에러 바운더리 및 404 페이지 구현 — `app/not-found.tsx`, `app/error.tsx` 신규 생성, `EmptyState` 컴포넌트 재사용
+  - ✅ 폼 유효성 검사 메시지 개선 — `lib/schemas/event.ts`/`profile.ts`에 필드별 한국어 메시지가 Task 004에서 이미 구현되어 있음을 확인, 추가 작업 없음
+  - ✅ 터치 영역 최적화 — `Button`(36→44/48px), `Input`(36→44px) 기본 컴포넌트 높이 조정. `bottom-nav.tsx`는 이미 64px로 충분해 수정 불필요
+  - ⚠️ **범위 제외**: 무한 스크롤/가상화 리스트는 PRD의 5-30명 소규모 이벤트 타겟과 Task 011의 서버 페이지네이션 제외 결정을 근거로 이번 Task에서 구현하지 않기로 결정. 실사용 규모가 커지면 후속 Task로 재검토
+  - 🐛 **계획 수정(구현 중 발견)**: 원래 계획한 라우트 세그먼트 `loading.tsx` 5개는 각 페이지가 이미 내부 `<Suspense>`(fallback 없음)로 데이터를 감싸고 있어 전혀 트리거되지 않는 구조적 문제를 인위적 지연 테스트로 발견. `loading.tsx` 파일들을 삭제하고 각 페이지의 내부 Suspense에 `fallback`을 직접 연결하는 방식으로 전환해 실제 동작을 확인
+  - 🐛 **버전 차이 발견**: `app/error.tsx` 작성 중 Next.js 16(설치 버전)의 에러 바운더리 콜백 prop이 이전 버전의 `reset`에서 `retry`로 이름이 바뀐 것을 `node_modules/next/dist/docs/`에서 확인 후 반영 (AGENTS.md 지침에 따른 검증)
+  - ✅ Claude in Chrome을 활용한 시각 회귀 테스트 — 404/스켈레톤/터치 영역 확대가 라이트·다크 모드 및 관리자 페이지 전반에서 레이아웃을 깨뜨리지 않음을 확인
 
 - **Task 014: 성능 최적화 및 SEO**
   - 이미지 최적화 (next/image, webp 포맷)
