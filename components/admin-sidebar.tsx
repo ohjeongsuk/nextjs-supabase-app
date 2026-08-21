@@ -4,6 +4,7 @@ import { BarChart3, Calendar, LayoutDashboard, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/logout-button";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { cn } from "@/lib/utils";
 
 const menuItems = [
@@ -17,8 +18,8 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex min-h-screen w-60 flex-col border-r bg-card">
-      <div className="flex h-16 items-center px-4 font-bold text-card-foreground">
+    <aside className="bg-card flex min-h-screen w-60 flex-col border-r">
+      <div className="text-card-foreground flex h-16 items-center px-4 font-bold">
         Gather Admin
       </div>
       <nav className="flex flex-col">
@@ -43,7 +44,11 @@ export function AdminSidebar() {
           );
         })}
       </nav>
-      <div className="mt-auto p-4">
+      <div className="mt-auto flex flex-col gap-2 p-4">
+        <div className="flex items-center justify-between px-2">
+          <span className="text-muted-foreground text-sm">화면 테마</span>
+          <ThemeSwitcher />
+        </div>
         <LogoutButton className="w-full" redirectTo="/admin/login" />
       </div>
     </aside>
