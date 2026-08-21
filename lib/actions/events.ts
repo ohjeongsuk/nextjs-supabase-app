@@ -83,10 +83,7 @@ export async function createEvent(
     .single();
 
   if (error || !data) {
-    return {
-      success: false,
-      error: error?.message ?? "이벤트 생성에 실패했어요",
-    };
+    return { success: false, error: "이벤트 생성에 실패했어요" };
   }
 
   const { error: hostJoinError } = await supabase
@@ -146,10 +143,7 @@ export async function updateEvent(
     .single();
 
   if (error || !data) {
-    return {
-      success: false,
-      error: error?.message ?? "이벤트 수정에 실패했어요",
-    };
+    return { success: false, error: "이벤트 수정에 실패했어요" };
   }
 
   revalidatePath("/events");
@@ -169,7 +163,7 @@ export async function deleteEvent(
     .eq("created_by", userId);
 
   if (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: "이벤트 삭제에 실패했어요" };
   }
 
   revalidatePath("/events");

@@ -30,7 +30,7 @@ export async function updateProfile(
     .eq("id", userId);
 
   if (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: "프로필 수정에 실패했어요" };
   }
 
   revalidatePath("/profile");
