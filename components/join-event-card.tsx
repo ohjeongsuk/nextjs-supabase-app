@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 import type { EventStatus, EventWithHost } from "@/lib/types";
 
 const statusLabels: Record<EventStatus, string> = {
@@ -26,6 +27,21 @@ export function JoinEventCard({ event }: JoinEventCardProps) {
 
   async function handleJoin() {
     setIsJoining(true);
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/join/${event.invite_code}`,
+        },
+      });
+      return;
+    }
+
     // TODO(Task 010): 초대 링크 참여 API 연동
     console.log("이벤트 참여 요청", event.id);
     toast.success("이벤트에 참여했어요");

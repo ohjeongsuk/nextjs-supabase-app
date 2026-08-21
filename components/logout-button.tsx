@@ -6,15 +6,19 @@ import { useRouter } from "next/navigation";
 
 interface LogoutButtonProps {
   className?: string;
+  redirectTo?: string;
 }
 
-export function LogoutButton({ className }: LogoutButtonProps) {
+export function LogoutButton({
+  className,
+  redirectTo = "/",
+}: LogoutButtonProps) {
   const router = useRouter();
 
   const logout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/");
+    router.push(redirectTo);
   };
 
   return (

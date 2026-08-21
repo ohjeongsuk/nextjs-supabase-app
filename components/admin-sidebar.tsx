@@ -3,6 +3,7 @@
 import { BarChart3, Calendar, LayoutDashboard, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogoutButton } from "@/components/logout-button";
 import { cn } from "@/lib/utils";
 
 const menuItems = [
@@ -42,6 +43,9 @@ export function AdminSidebar() {
           );
         })}
       </nav>
+      <div className="mt-auto p-4">
+        <LogoutButton className="w-full" redirectTo="/admin/login" />
+      </div>
     </aside>
   );
 }
