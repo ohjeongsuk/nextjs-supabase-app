@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { joinEvent } from "@/lib/actions/participants";
 import { createClient } from "@/lib/supabase/client";
 import type { EventStatus, EventWithHost } from "@/lib/types";
 
@@ -42,10 +43,16 @@ export function JoinEventCard({ event }: JoinEventCardProps) {
       return;
     }
 
-    // TODO(Task 010): 초대 링크 참여 API 연동
-    console.log("이벤트 참여 요청", event.id);
+    const result = await joinEvent(event.invite_code);
+    setIsJoining(false);
+
+    if (!result.success) {
+      toast.error(result.error);
+      return;
+    }
+
     toast.success("이벤트에 참여했어요");
-    router.push(`/events/${event.id}`);
+    router.push(`/events/${result.data.eventId}`);
   }
 
   return (

@@ -89,6 +89,15 @@ export async function createEvent(
     };
   }
 
+  const { error: hostJoinError } = await supabase
+    .from("event_participants")
+    .insert({ event_id: data.id, user_id: userId, role: "host" });
+
+  if (hostJoinError) {
+    await supabase.from("events").delete().eq("id", data.id);
+    return { success: false, error: "이벤트 생성에 실패했어요" };
+  }
+
   revalidatePath("/events");
   return { success: true, data: { id: data.id } };
 }

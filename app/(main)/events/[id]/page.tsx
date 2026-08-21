@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
 import { EventHostActions } from "@/components/event-host-actions";
 import { InviteShareButton } from "@/components/invite-share-button";
-import { ParticipantCard } from "@/components/participant-card";
+import { ParticipantsSection } from "@/components/participants-section";
 import { getEventById } from "@/lib/queries/events";
 import { createClient } from "@/lib/supabase/server";
 import type { EventStatus } from "@/lib/types";
@@ -84,16 +84,10 @@ async function EventDetailContent({ params }: Props) {
 
         {isHost && <InviteShareButton inviteCode={event.invite_code} />}
 
-        <div>
-          <h2 className="mb-2 font-semibold text-foreground">
-            참여자 {event.participant_count}명
-          </h2>
-          <div>
-            {event.participants.map((participant) => (
-              <ParticipantCard key={participant.id} participant={participant} />
-            ))}
-          </div>
-        </div>
+        <ParticipantsSection
+          eventId={event.id}
+          initialParticipants={event.participants}
+        />
 
         {isHost && <EventHostActions eventId={event.id} />}
       </div>
