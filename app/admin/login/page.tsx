@@ -1,7 +1,9 @@
+import { AdminLoginForm } from "@/components/admin-login-form";
+
 export default function AdminLoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <h1 className="text-2xl font-bold text-foreground">관리자 로그인</h1>
+    <div className="flex min-h-screen items-center justify-center bg-muted p-4">
+      <AdminLoginForm />
     </div>
   );
 }

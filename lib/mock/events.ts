@@ -6,7 +6,7 @@ import type {
   User,
 } from "@/lib/types";
 
-const mockUsers: User[] = [
+export const mockUsersList: User[] = [
   {
     id: "user-1",
     email: "hayoon.jung@example.com",
@@ -34,7 +34,18 @@ const mockUsers: User[] = [
     created_at: "2026-07-03T00:00:00.000Z",
     updated_at: "2026-07-03T00:00:00.000Z",
   },
+  {
+    id: "user-4",
+    email: "admin@example.com",
+    name: "관리자",
+    avatar_url: null,
+    role: "admin",
+    created_at: "2026-06-01T00:00:00.000Z",
+    updated_at: "2026-06-01T00:00:00.000Z",
+  },
 ];
+
+const mockUsers = mockUsersList.filter((user) => user.role === "user");
 
 export const currentMockUser = mockUsers[0];
 
