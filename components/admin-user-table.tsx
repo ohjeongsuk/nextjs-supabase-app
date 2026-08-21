@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { deleteUserAsAdmin } from "@/lib/actions/admin";
 import { cn } from "@/lib/utils";
 import type { AdminUserListItem, UserRoleFilter } from "@/lib/types";
 
@@ -64,10 +65,16 @@ export function AdminUserTable({ users, currentUserId }: AdminUserTableProps) {
   async function handleDelete() {
     if (!targetUser) return;
     setIsDeleting(true);
-    // TODO(Task 011): 사용자 삭제 API 연동
-    console.log("관리자 사용자 삭제 요청", targetUser.id);
-    toast.success("사용자가 삭제되었어요");
+
+    const result = await deleteUserAsAdmin(targetUser.id);
     setIsDeleting(false);
+
+    if (!result.success) {
+      toast.error(result.error);
+      return;
+    }
+
+    toast.success("사용자가 삭제되었어요");
     setTargetUser(null);
   }
 

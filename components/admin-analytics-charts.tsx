@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import {
   CartesianGrid,
   Line,
@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -18,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { fetchAnalyticsSummary } from "@/lib/actions/admin";
 import type { AnalyticsPeriod, AnalyticsSummary } from "@/lib/types";
 
 const periodOptions: { value: AnalyticsPeriod; label: string }[] = [
@@ -50,12 +52,27 @@ function ChartTooltip({ active, label, payload, unit }: ChartTooltipProps) {
 }
 
 interface AdminAnalyticsChartsProps {
-  summary: AnalyticsSummary;
+  initialSummary: AnalyticsSummary;
 }
 
-export function AdminAnalyticsCharts({ summary }: AdminAnalyticsChartsProps) {
-  // TODO(Task 011): 기간 변경 시 실제 집계 API 재조회 연동. 지금은 목업이 7일치만 있어 선택 UI만 동작
+export function AdminAnalyticsCharts({
+  initialSummary,
+}: AdminAnalyticsChartsProps) {
   const [period, setPeriod] = useState<AnalyticsPeriod>("7d");
+  const [summary, setSummary] = useState(initialSummary);
+  const [isPending, startTransition] = useTransition();
+
+  function handlePeriodChange(value: AnalyticsPeriod) {
+    setPeriod(value);
+    startTransition(async () => {
+      const result = await fetchAnalyticsSummary(value);
+      if (!result.success) {
+        toast.error(result.error);
+        return;
+      }
+      setSummary(result.data);
+    });
+  }
 
   return (
     <div className="space-y-6">
@@ -71,7 +88,10 @@ export function AdminAnalyticsCharts({ summary }: AdminAnalyticsChartsProps) {
 
         <Select
           value={period}
-          onValueChange={(value) => setPeriod(value as AnalyticsPeriod)}
+          onValueChange={(value) =>
+            handlePeriodChange(value as AnalyticsPeriod)
+          }
+          disabled={isPending}
         >
           <SelectTrigger className="w-32">
             <SelectValue />

@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { deleteEventAsAdmin } from "@/lib/actions/admin";
 import { cn } from "@/lib/utils";
 import type {
   AdminEventListItem,
@@ -71,10 +72,16 @@ export function AdminEventTable({ events }: AdminEventTableProps) {
   async function handleDelete() {
     if (!targetEvent) return;
     setIsDeleting(true);
-    // TODO(Task 011): 이벤트 삭제 API 연동
-    console.log("관리자 이벤트 삭제 요청", targetEvent.id);
-    toast.success("이벤트가 삭제되었어요");
+
+    const result = await deleteEventAsAdmin(targetEvent.id);
     setIsDeleting(false);
+
+    if (!result.success) {
+      toast.error(result.error);
+      return;
+    }
+
+    toast.success("이벤트가 삭제되었어요");
     setTargetEvent(null);
   }
 

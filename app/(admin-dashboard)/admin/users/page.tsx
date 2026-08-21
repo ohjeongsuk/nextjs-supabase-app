@@ -1,16 +1,27 @@
+import { Suspense } from "react";
 import { AdminUserTable } from "@/components/admin-user-table";
-import { mockAdminUsers } from "@/lib/mock/admin";
+import { getAdminUsers } from "@/lib/queries/admin";
+import { createClient } from "@/lib/supabase/server";
 
-const currentMockAdminId = "user-4";
+async function AdminUsersContent() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  const currentUserId = data?.claims.sub ?? "";
 
-export default function AdminUsersPage() {
+  const users = await getAdminUsers();
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-foreground">사용자 관리</h1>
-      <AdminUserTable
-        users={mockAdminUsers}
-        currentUserId={currentMockAdminId}
-      />
+      <AdminUserTable users={users} currentUserId={currentUserId} />
     </div>
+  );
+}
+
+export default function AdminUsersPage() {
+  return (
+    <Suspense>
+      <AdminUsersContent />
+    </Suspense>
   );
 }

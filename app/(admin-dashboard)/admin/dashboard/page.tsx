@@ -1,7 +1,8 @@
 import { BarChart3, Calendar, Users } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockDashboardMetrics } from "@/lib/mock/admin";
+import { getDashboardMetrics } from "@/lib/queries/admin";
 
 const metricCards = [
   { key: "events_today", label: "오늘 생성된 이벤트" },
@@ -19,7 +20,9 @@ const quickLinks = [
   { href: "/admin/analytics", icon: BarChart3, label: "통계 분석" },
 ];
 
-export default function AdminDashboardPage() {
+async function AdminDashboardContent() {
+  const metrics = await getDashboardMetrics();
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-foreground">대시보드</h1>
@@ -34,7 +37,7 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-foreground">
-                {mockDashboardMetrics[card.key]}
+                {metrics[card.key]}
               </p>
             </CardContent>
           </Card>
@@ -59,5 +62,13 @@ export default function AdminDashboardPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <Suspense>
+      <AdminDashboardContent />
+    </Suspense>
   );
 }
