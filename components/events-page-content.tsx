@@ -28,7 +28,7 @@ export function EventsPageContent({
 
   return (
     <div className="relative p-4">
-      <h1 className="mb-4 text-2xl font-bold text-foreground">내 이벤트</h1>
+      <h1 className="text-foreground mb-4 text-2xl font-bold">내 이벤트</h1>
 
       <div className="mb-4 flex gap-2">
         {roleTabs.map((tab) => (
@@ -63,13 +63,13 @@ export function EventsPageContent({
       />
 
       {roleTab === "hosted" && (
-        <div className="fixed bottom-20 left-1/2 z-40 w-full max-w-app-frame -translate-x-1/2 px-4">
+        <div className="max-w-app-frame fixed bottom-20 left-1/2 z-40 w-full -translate-x-1/2 px-4">
           <Link
             href="/events/new"
-            className="ml-auto flex size-14 w-fit items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105"
+            className="bg-primary text-primary-foreground ml-auto flex size-12 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-105"
             aria-label="새 이벤트 만들기"
           >
-            <Plus className="size-6" />
+            <Plus className="size-5" />
           </Link>
         </div>
       )}
