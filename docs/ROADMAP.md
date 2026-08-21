@@ -211,6 +211,11 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
   - ⚠️ **발견 사항**: `@sentry/cli`의 postinstall 스크립트(소스맵 업로드용 바이너리 다운로드)가 npm 기본 보안 정책으로 차단됨 — 이번 세션은 소스맵 업로드가 필요한 실배포가 없어 사용자 확인(응답 없어 권장 옵션대로 미승인)에 따라 보류. 추후 실제 배포 시 필요하면 `npm approve-scripts @sentry/cli`로 별도 승인 필요
   - ✅ typecheck/build 통과 확인 (Sentry/GA 환경변수 미설정 상태에서도 정상 빌드됨을 검증). lint는 Task 014부터 남아있는 범위 밖 기존 이슈(`components/theme-switcher.tsx`) 1건 외 신규 이슈 없음
 
+- **회귀 재검토 (2026-08-21, 사용자 요청)** — Task 001~015 전체를 ROADMAP.md 기준으로 다시 점검, typecheck/lint/build 재실행 및 보안 관련 항목 재확인
+  - 🐛 **발견 및 수정한 결함**: Task 012가 "PostgREST 원시 에러 메시지 노출 수정 완료"로 기록했으나, `lib/actions/events.ts`의 커버 이미지 업로드 실패 경로(`uploadCoverImage` 및 이를 호출하는 `createEvent`/`updateEvent`의 catch 블록)는 이 수정 대상에서 빠져 Supabase Storage의 원시 `error.message`가 여전히 사용자에게 노출되고 있었음. 세 지점 모두 고정 한국어 문구("커버 이미지 업로드에 실패했어요")로 교체
+  - 🐛 **발견 및 수정한 결함**: `.github/workflows/ci.yml`(Task 015)이 항상 `npm run lint`를 실행하는데, `components/theme-switcher.tsx`의 기존 lint 에러(`react-hooks/set-state-in-effect`, Task 014/015에서 "범위 밖 기존 이슈"로 남겨둔 것)가 push 시 CI를 무조건 실패시키는 활성 결함으로 성격이 바뀌어 있었음. `useState`+`useEffect` mounted 패턴을 `useSyncExternalStore` 기반 `useHydrated()` 훅으로 교체해 해소 — 브라우저(`/protected`)에서 hydration mismatch 없이 정상 렌더링/클릭 동작 확인, lint 0 에러로 전환
+  - ✅ **검증 결과**: 그 외 재확인한 항목(Task 011 `requireAdmin()` 3개 액션 재검증, Task 012 이벤트 수정 페이지 소유권 가드, Task 014 `proxy.ts` SEO 라우트 예외, `.env.example`과 실제 코드 참조 환경변수 일치)은 모두 이상 없음. typecheck/lint/build 전체 재통과 확인
+
 ## 작업별 세부 사항
 
 ### 각 Task 파일 구조

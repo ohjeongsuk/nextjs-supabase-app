@@ -10,18 +10,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Laptop, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+
+function emptySubscribe() {
+  return () => {};
+}
+
+// 서버 렌더링(항상 false) 이후 클라이언트에서 hydration이 끝났는지 구독 기반으로 판별한다.
+// useState + useEffect로 흉내 내면 마운트 시 setState를 호출하게 되어 불필요한 리렌더를 유발한다.
+function useHydrated() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+}
 
 const ThemeSwitcher = () => {
-  const [mounted, setMounted] = useState(false);
+  const hydrated = useHydrated();
   const { theme, setTheme } = useTheme();
 
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
+  if (!hydrated) {
     return null;
   }
 

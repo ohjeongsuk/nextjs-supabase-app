@@ -32,7 +32,7 @@ async function uploadCoverImage(
     .upload(path, file);
 
   if (error) {
-    throw new Error(`커버 이미지 업로드에 실패했어요: ${error.message}`);
+    throw new Error("커버 이미지 업로드에 실패했어요");
   }
 
   const {
@@ -60,10 +60,10 @@ export async function createEvent(
         userId,
         parsed.data.cover_image,
       );
-    } catch (error) {
+    } catch {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "오류가 발생했어요",
+        error: "커버 이미지 업로드에 실패했어요",
       };
     }
   }
@@ -118,10 +118,10 @@ export async function updateEvent(
         userId,
         parsed.data.cover_image,
       );
-    } catch (error) {
+    } catch {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "오류가 발생했어요",
+        error: "커버 이미지 업로드에 실패했어요",
       };
     }
   } else if (parsed.data.cover_image === null) {
