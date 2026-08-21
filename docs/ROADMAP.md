@@ -147,12 +147,15 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
   - ✅ Playwright MCP를 활용한 이벤트 생성/수정/삭제 테스트 — 브라우저(Chrome 확장 세션)로 생성→조회→수정→초대링크→삭제 전체 사이클을 실계정으로 직접 검증. `datetime-local` 인풋은 Chrome 자동화의 `type` 액션이 세그먼트 입력을 지원하지 않아 JS로 값을 직접 설정해 우회
   - ⚠️ **미착수**: `event_participants` 쓰기(실제 참여 로직)는 Task 010 범위로 명확히 분리, 조회만 이번에 연동함
 
-- **Task 010: 참여자 관리**
-  - 초대 링크 참여 로직 구현 (F004)
-  - 중복 참여 방지 로직 구현
-  - 실시간 참여자 수 카운트 업데이트
-  - 내가 참여한/만든 이벤트 목록 조회 구현 (F007)
-  - Playwright MCP를 활용한 실시간 참여자 업데이트 테스트
+- **Task 010: 참여자 관리** ✅ - 완료 (2026-08-21) — 상세 명세서: `docs/tasks/task-010-participants.md`
+  - ✅ 초대 링크 참여 로직 구현 (F004) — `lib/actions/participants.ts`의 `joinEvent`
+  - ✅ 중복 참여 방지 로직 구현 — `UNIQUE(event_id, user_id)` DB 제약 + `23505` 에러를 성공으로 취급하는 애플리케이션 처리
+  - ✅ 실시간 참여자 수 카운트 업데이트 — `components/participants-section.tsx`, Realtime `postgres_changes` 구독
+  - ✅ 내가 참여한/만든 이벤트 목록 조회 구현 (F007) — Task 009에서 이미 구현됨, 회귀 테스트로 재확인
+  - ✅ Claude in Chrome을 활용한 실시간 참여자 업데이트 테스트 — 이벤트 생성/참여/중복참여/404/실시간 INSERT·DELETE 전체 시나리오 검증
+  - ⚠️ **범위 확장**: `createEvent`가 host를 `event_participants`에 자동 참여시키지 않던 기존 버그 발견 및 수정 (host 자신이 참여자 수에 포함되지 않던 문제)
+  - ⚠️ **발견한 결함(수정 완료)**: `event_participants`의 `REPLICA IDENTITY`가 기본값(PK만 포함)이라 Realtime DELETE 이벤트가 `event_id` 기준 서버 필터를 통과하지 못해 드롭되던 문제 — `REPLICA IDENTITY FULL`로 전환해 해결
+  - ⚠️ **미검증 항목**: 실제 2번째 Google 계정으로의 참여 클릭 플로우와 비로그인 OAuth 리다이렉트는 테스트 계정 제약으로 DB 직접 조작으로 대체 검증함
 
 - **Task 011: 관리자 대시보드 백엔드 구현**
   - 대시보드 지표 집계 쿼리 구현 (F012)
