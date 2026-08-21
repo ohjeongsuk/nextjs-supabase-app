@@ -114,14 +114,16 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
 
 ### Phase 3: 데이터베이스 설정 및 핵심 기능 구현
 
-- **Task 007: 데이터베이스 스키마 및 Supabase 초기 설정**
-  - UI 검토 후 최종 확정된 요구사항을 반영한 스키마 설계
-  - Supabase 데이터베이스 테이블 생성 (users, events, event_participants)
-  - Row Level Security (RLS) 정책 설정
-  - 인덱스 생성 (invite_code, created_by, event_id, user_id)
-  - Supabase Storage 버킷 생성 (event-covers)
-  - Realtime 구독 설정 준비
-  - UI에서 사용 중인 임시 타입을 실제 DB 스키마 타입으로 교체
+- **Task 007: 데이터베이스 스키마 및 Supabase 초기 설정** ✅ - 완료 (2026-08-21)
+  - ✅ UI 검토 후 최종 확정된 요구사항을 반영한 스키마 설계
+  - ✅ Supabase 데이터베이스 테이블 생성 (events, event_participants 신규 생성 / users는 기존 `profiles` 테이블을 확장해 재사용 — `full_name`→`name` 컬럼명 변경, `role` 컬럼 추가)
+  - ✅ Row Level Security (RLS) 정책 설정 — events/event_participants는 전체 조회 허용 + 본인만 쓰기, profiles는 `role` 컬럼을 자기 자신도 UPDATE로 변경 불가하도록 강화
+  - ✅ 인덱스 생성 (invite_code, created_by, event_id, user_id)
+  - ✅ Supabase Storage 버킷 생성 (event-covers) — 공개 조회 + 인증 사용자 업로드 + 본인 파일만 수정/삭제 정책
+  - ⚠️ Realtime 구독 설정 준비 — 미착수, Task 010(참여자 관리, 실시간 카운트) 진행 시 함께 설정 예정
+  - ⚠️ UI에서 사용 중인 임시 타입을 실제 DB 스키마 타입으로 교체 — 미착수. `lib/supabase/types.ts`는 실제 DB 기반으로 재생성 완료했으나, `lib/types/domain.ts`(UI가 참조하는 타입)는 실제 API 연동이 시작되는 Task 009/010에서 함께 교체하기로 결정 (지금 교체 시 Task 004~006 전체 컴포넌트의 타입 사용을 건드리는 범위 큰 변경이라 보류)
+  - ⚠️ **후속 조치**: `instruments` 테이블(스타터킷 튜토리얼 잔재)은 Gather와 무관하여 그대로 둠, 필요 시 이후 삭제
+  - ⚠️ **후속 조치**: `next.config.ts`에 `event-covers` 버킷 도메인 `images.remotePatterns` 추가 완료 (Task 003 후속 조치 반영)
 
 - **Task 008: 인증 시스템 및 권한 관리**
   - Google OAuth 로그인 플로우 완성 (F010)
