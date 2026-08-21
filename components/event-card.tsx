@@ -35,7 +35,7 @@ export function EventCard({ event, className }: EventCardProps) {
           className,
         )}
       >
-        <div className="relative aspect-video w-full bg-muted">
+        <div className="bg-muted relative aspect-video w-full">
           {event.cover_image_url ? (
             <Image
               src={event.cover_image_url}
@@ -44,22 +44,21 @@ export function EventCard({ event, className }: EventCardProps) {
               className="object-cover"
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-muted-foreground">
+            <div className="text-muted-foreground flex h-full items-center justify-center">
               <CalendarDays className="size-10" />
             </div>
           )}
-          <Badge
-            variant={statusVariants[event.status]}
-            className="absolute right-2 top-2"
-          >
-            {statusLabels[event.status]}
-          </Badge>
         </div>
         <CardContent className="space-y-2 p-4">
-          <h3 className="line-clamp-1 font-semibold text-card-foreground">
-            {event.title}
-          </h3>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="text-card-foreground line-clamp-1 font-semibold">
+              {event.title}
+            </h3>
+            <Badge variant={statusVariants[event.status]} className="shrink-0">
+              {statusLabels[event.status]}
+            </Badge>
+          </div>
+          <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
             <CalendarDays className="size-4 shrink-0" />
             <span>
               {eventDate.toLocaleDateString("ko-KR", {
@@ -69,11 +68,11 @@ export function EventCard({ event, className }: EventCardProps) {
               })}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
             <MapPin className="size-4 shrink-0" />
             <span className="line-clamp-1">{event.location}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
             <Users className="size-4 shrink-0" />
             <span>{event.participant_count}명 참여</span>
           </div>

@@ -88,14 +88,16 @@ async function EventDetailContent({ params }: Props) {
             <CalendarDays className="size-10" />
           </div>
         )}
-        <Badge className="absolute top-3 right-3">
-          {statusLabels[event.status]}
-        </Badge>
       </div>
 
       <div className="space-y-6 p-4">
         <div className="space-y-2">
-          <h1 className="text-foreground text-2xl font-bold">{event.title}</h1>
+          <div className="flex items-center justify-between gap-2">
+            <h1 className="text-foreground text-2xl font-bold">
+              {event.title}
+            </h1>
+            <Badge className="shrink-0">{statusLabels[event.status]}</Badge>
+          </div>
           <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
             <CalendarDays className="size-4 shrink-0" />
             <span>

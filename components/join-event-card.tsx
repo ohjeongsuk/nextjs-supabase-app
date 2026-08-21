@@ -57,7 +57,7 @@ export function JoinEventCard({ event }: JoinEventCardProps) {
 
   return (
     <div className="p-4">
-      <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
+      <div className="bg-muted relative aspect-video w-full overflow-hidden rounded-lg">
         {event.cover_image_url ? (
           <Image
             src={event.cover_image_url}
@@ -66,25 +66,27 @@ export function JoinEventCard({ event }: JoinEventCardProps) {
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground">
+          <div className="text-muted-foreground flex h-full items-center justify-center">
             <CalendarDays className="size-10" />
           </div>
         )}
-        <Badge className="absolute right-3 top-3">
-          {statusLabels[event.status]}
-        </Badge>
       </div>
 
       <div className="space-y-4 py-6">
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {event.host.name}님의 초대
           </p>
-          <h1 className="text-2xl font-bold text-foreground">{event.title}</h1>
+          <div className="flex items-center justify-between gap-2">
+            <h1 className="text-foreground text-2xl font-bold">
+              {event.title}
+            </h1>
+            <Badge className="shrink-0">{statusLabels[event.status]}</Badge>
+          </div>
         </div>
 
         <div className="space-y-1.5">
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
             <CalendarDays className="size-4 shrink-0" />
             <span>
               {eventDate.toLocaleString("ko-KR", {
@@ -96,18 +98,18 @@ export function JoinEventCard({ event }: JoinEventCardProps) {
               })}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
             <MapPin className="size-4 shrink-0" />
             <span>{event.location}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
             <Users className="size-4 shrink-0" />
             <span>{event.participant_count}명 참여 중</span>
           </div>
         </div>
 
         {event.description && (
-          <p className="whitespace-pre-wrap text-sm text-foreground">
+          <p className="text-foreground text-sm whitespace-pre-wrap">
             {event.description}
           </p>
         )}
