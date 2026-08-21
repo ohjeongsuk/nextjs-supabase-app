@@ -1,4 +1,5 @@
 import { CalendarDays, MapPin } from "lucide-react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -41,6 +42,20 @@ function EventDetailSkeleton() {
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const event = await getEventById(id).catch(() => null);
+
+  if (!event) {
+    return { title: "이벤트를 찾을 수 없어요" };
+  }
+
+  return {
+    title: `${event.title} | Gather`,
+    description: `${event.location}에서 열리는 이벤트예요`,
+  };
+}
 
 async function EventDetailContent({ params }: Props) {
   const { id } = await params;

@@ -29,13 +29,16 @@ function toParticipantUser(profile: ProfileRow): User {
   };
 }
 
+const EVENT_WITH_PARTICIPANTS_SELECT =
+  "id, title, description, location, event_date, cover_image_url, invite_code, created_by, created_at, updated_at, event_participants(id, event_id, user_id, role, joined_at, profiles(id, name, avatar_url, role, created_at, updated_at))";
+
 export async function getHostedEvents(
   userId: string,
 ): Promise<EventWithParticipants[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("events")
-    .select("*, event_participants(*, profiles(*))")
+    .select(EVENT_WITH_PARTICIPANTS_SELECT)
     .eq("created_by", userId)
     .order("event_date", { ascending: true });
 
@@ -50,21 +53,20 @@ export async function getJoinedEvents(
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("events")
-    .select("*, event_participants!inner(*, profiles(*))")
+    .select("id, event_participants!inner(user_id)")
     .neq("created_by", userId)
-    .eq("event_participants.user_id", userId)
-    .order("event_date", { ascending: true });
+    .eq("event_participants.user_id", userId);
 
   if (error || !data) return [];
 
-  // 위 필터는 "참여자 목록에 본인이 있는 이벤트"만 골라내고,
+  // 위 필터는 "참여자 목록에 본인이 있는 이벤트"의 id만 골라내고,
   // 아래에서는 그 이벤트의 전체 참여자 목록을 다시 조회해 카드에 표시한다
   const eventIds = data.map((event) => event.id);
   if (eventIds.length === 0) return [];
 
   const { data: fullEvents } = await supabase
     .from("events")
-    .select("*, event_participants(*, profiles(*))")
+    .select(EVENT_WITH_PARTICIPANTS_SELECT)
     .in("id", eventIds)
     .order("event_date", { ascending: true });
 
@@ -84,7 +86,7 @@ async function getEventByColumn(
   const { data, error } = await supabase
     .from("events")
     .select(
-      "*, event_participants(*, profiles(*)), host:profiles!events_created_by_fkey(*)",
+      `${EVENT_WITH_PARTICIPANTS_SELECT}, host:profiles!events_created_by_fkey(id, name, avatar_url, role, created_at, updated_at)`,
     )
     .eq(column, value)
     .single();

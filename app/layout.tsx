@@ -2,16 +2,14 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
+import { getSiteUrl } from "@/lib/utils";
 import "./globals.css";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  metadataBase: new URL(getSiteUrl()),
+  title: "Gather - 초대 링크 하나로 모든 것을 해결",
+  description:
+    "일회성 이벤트를 간편하게 관리하는 올인원 플랫폼. 제목, 날짜, 장소만 입력하면 즉시 이벤트를 만들고 초대 링크로 참여자를 모아보세요.",
 };
 
 const geistSans = Geist({
@@ -26,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ko" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
         <ThemeProvider
           attribute="class"

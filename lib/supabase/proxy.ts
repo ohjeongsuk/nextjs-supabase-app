@@ -47,9 +47,16 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
 
+  const isSeoRoute =
+    request.nextUrl.pathname === "/robots.txt" ||
+    request.nextUrl.pathname === "/sitemap.xml" ||
+    request.nextUrl.pathname.startsWith("/opengraph-image") ||
+    request.nextUrl.pathname.startsWith("/twitter-image");
+
   if (
     request.nextUrl.pathname !== "/" &&
     !user &&
+    !isSeoRoute &&
     !request.nextUrl.pathname.startsWith("/login") &&
     !request.nextUrl.pathname.startsWith("/auth") &&
     !request.nextUrl.pathname.startsWith("/join") &&

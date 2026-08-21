@@ -132,7 +132,7 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
   - ✅ 보호된 라우트 접근 제어 구현 — `proxy.ts`(미인증) + 레이아웃(role 불일치) 2단계 방어
   - ✅ 로그아웃 기능 구현 — 기존 `LogoutButton`에 `redirectTo` prop 추가해 관리자 사이드바에서 재사용
   - ✅ Playwright MCP를 활용한 인증 플로우 E2E 테스트 — `docs/testing/task-008-auth-flow-test.md`에 기록. Google OAuth 완주는 외부 서비스라 자동화 범위 밖, 리다이렉트/권한 분기 로직만 검증
-  - ⚠️ **미검증 항목**: `role: admin` 계정으로 관리자 페이지 정상 진입하는 성공 경로는 실제 관리자 계정 부재로 미검증 (role 불일치 거부 경로는 실계정으로 검증 완료)
+  - ✅ **미검증 항목 해소 (2026-08-21)**: `role: admin` 계정으로 관리자 페이지 정상 진입하는 성공 경로를 실계정(`anmh0121@naver.com`, 이메일/비밀번호 로그인)으로 검증 완료. 이 계정을 SQL로 영구 `role: admin` 승격 후 로그인 → `/admin/dashboard` 리다이렉트 없이 정상 진입, `/admin/events`·`/admin/users`·`/admin/analytics` 전체 정상 동작, 로그인한 본인 행만 사용자 삭제 버튼 비활성화됨을 확인. 로그아웃 후 `/admin/dashboard` 접근 시 `/auth/login` 리다이렉트도 재확인해 회귀 없음 확인
 
 - **Task 009: 이벤트 CRUD 및 초대 시스템** ✅ - 완료 (2026-08-21)
   - ✅ 이벤트 생성 API 구현 (F001) — `lib/actions/events.ts`의 `createEvent`
@@ -168,6 +168,7 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
   - ⚠️ **범위 확장(빌드 차단 결함 수정)**: `npm run build` 중 관리자 라우트 4개 전체가 prerender 단계에서 실패하는 것을 발견. 원인은 `app/(admin-dashboard)/layout.tsx`(Task 008 작성분, 이번 세션 변경 아님)가 `cookies()`를 `<Suspense>` 밖에서 호출하던 기존 결함 — 레이아웃의 인증 체크를 `RequireAdmin` 서브컴포넌트로 분리해 `<Suspense>`로 감싸 해결. 이 수정 없이는 Task 011 범위와 무관하게 프로덕션 빌드 자체가 불가능한 상태였음
   - ⚠️ **정리**: 더 이상 참조되지 않는 `lib/mock/admin.ts`, `lib/mock/events.ts` 삭제
   - ⚠️ **미검증 항목**: 실제 사용자 삭제(`auth.admin.deleteUser`) 실행은 DB의 유일한 후보 계정이 실사용자 이메일로 가입된 계정이라 데이터 보존을 위해 보류, 코드 리뷰로 로직만 검증함
+  - ✅ **후속 재검증 (2026-08-21, Task 008 후속)**: `anmh0121@naver.com` 계정을 실제로 영구 `role: admin` 승격 후 이메일/비밀번호 로그인으로 대시보드·이벤트 삭제·사용자 목록·통계 기간 재조회를 실계정 세션에서 재확인, 임시 승격 검증과 동일한 결과로 회귀 없음 확인
 
 - **Task 012: 핵심 기능 통합 테스트** ✅ - 완료 (2026-08-21) — 상세 명세서: `docs/tasks/task-012-integration-testing.md`
   - ✅ Claude in Chrome을 사용한 전체 사용자 플로우 테스트 — Task 009~011에서 검증되지 않은 "플로우 간 전환" 관점에서 재검증
@@ -190,13 +191,16 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
   - 🐛 **버전 차이 발견**: `app/error.tsx` 작성 중 Next.js 16(설치 버전)의 에러 바운더리 콜백 prop이 이전 버전의 `reset`에서 `retry`로 이름이 바뀐 것을 `node_modules/next/dist/docs/`에서 확인 후 반영 (AGENTS.md 지침에 따른 검증)
   - ✅ Claude in Chrome을 활용한 시각 회귀 테스트 — 404/스켈레톤/터치 영역 확대가 라이트·다크 모드 및 관리자 페이지 전반에서 레이아웃을 깨뜨리지 않음을 확인
 
-- **Task 014: 성능 최적화 및 SEO**
-  - 이미지 최적화 (next/image, webp 포맷)
-  - 코드 스플리팅 최적화
-  - Supabase 쿼리 최적화 (select 최소화, JOIN 최적화)
-  - 메타 태그 및 Open Graph 설정
-  - robots.txt 및 sitemap.xml 생성
-  - Lighthouse 점수 90+ 달성
+- **Task 014: 성능 최적화 및 SEO** ✅ - 완료 (2026-08-21) — 상세 명세서: `docs/tasks/task-014-performance-seo.md`
+  - ✅ 이미지 최적화 (next/image, webp 포맷) — 기존 4개 컴포넌트가 이미 `next/image` 사용 중이었음을 확인, 추가 작업 불필요
+  - ✅ 코드 스플리팅 최적화 — `admin-analytics-charts-loader.tsx`(Client Component 래퍼)로 Recharts를 `next/dynamic(ssr:false)` 지연 로딩, 빌드 매니페스트로 372KB 청크 분리 확인
+  - ✅ Supabase 쿼리 최적화 (select 최소화, JOIN 최적화) — `lib/queries/events.ts`/`profile.ts`의 `select("*")` 계열을 명시적 컬럼 목록으로 좁힘, `getJoinedEvents`는 1단계 id 조회 후 2단계 상세 조회로 축소
+  - ✅ 메타 태그 및 Open Graph 설정 — `app/layout.tsx` 메타데이터를 Gather 내용으로 전면 교체, `lang="ko"`로 변경, `opengraph-image.tsx`/`twitter-image.tsx`(ImageResponse 기반 동적 생성)로 스타터킷 정적 PNG 대체, 이벤트 상세/초대 페이지에 `generateMetadata` 추가
+  - ✅ robots.txt 및 sitemap.xml 생성 — `app/robots.ts`/`sitemap.ts` 신규 작성, curl로 200 확인
+  - ⚠️ **범위 조정(사용자 확인)**: Lighthouse 점수 90+ 측정은 실사용 환경(HTTPS/CDN/실네트워크) 차이가 커 배포 후(Task 015)로 미루기로 결정. 이번엔 정적으로 확인 가능한 최적화(이미지/스플리팅/쿼리/SEO)만 적용
+  - 🐛 **발견 및 수정한 결함**: `proxy.ts`의 인증 가드가 `/robots.txt`, `/sitemap.xml`, `/opengraph-image`, `/twitter-image`를 예외 목록에서 누락해 미인증 상태에서 307 리다이렉트되던 문제 발견, `isSeoRoute` 예외 추가로 수정
+  - 🐛 **발견 및 해결한 문제**: `opengraph-image.tsx`가 dev 서버에서 "Empty reply from server"로 크래시하던 문제 — 처음엔 한글 폰트(Satori 기본 폰트 미지원) 문제로 보고 영문 태그라인으로 교체했으나 재현됨. dev 서버 프로세스를 완전 종료 후 재시작하니 정상 동작(200, 유효한 PNG) 확인 — 실제 원인은 코드가 아닌 누적된 dev 서버 프로세스 상태(메모리 1.5GB 이상 사용 중이던 좀비 상태)였던 것으로 판단
+  - ✅ typecheck/build 통과 확인. lint는 이번 세션 미수정 파일(`components/theme-switcher.tsx`, 스타터킷 원본)의 `react-hooks/set-state-in-effect` 위반 1건이 있으나 Task 014 범위 밖 기존 이슈로 별도 처리 필요
 
 - **Task 015: 배포 및 모니터링**
   - Vercel 프로젝트 설정 및 환경 변수 구성

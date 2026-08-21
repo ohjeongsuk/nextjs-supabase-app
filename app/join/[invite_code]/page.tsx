@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { JoinEventCard } from "@/components/join-event-card";
@@ -7,6 +8,20 @@ import { getEventByInviteCode } from "@/lib/queries/events";
 type Props = {
   params: Promise<{ invite_code: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { invite_code } = await params;
+  const event = await getEventByInviteCode(invite_code).catch(() => null);
+
+  if (!event) {
+    return { title: "초대를 찾을 수 없어요" };
+  }
+
+  return {
+    title: `${event.host.name ?? "누군가"}님의 초대: ${event.title} | Gather`,
+    description: `${event.location}에서 열리는 이벤트에 초대되었어요`,
+  };
+}
 
 function JoinPageSkeleton() {
   return (

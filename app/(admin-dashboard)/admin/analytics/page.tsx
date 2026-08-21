@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { AdminAnalyticsCharts } from "@/components/admin-analytics-charts";
+import { AdminAnalyticsChartsLoader } from "@/components/admin-analytics-charts-loader";
 import { getAnalyticsSummary } from "@/lib/queries/admin";
 
 async function AdminAnalyticsContent() {
@@ -7,8 +7,8 @@ async function AdminAnalyticsContent() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-foreground">통계 분석</h1>
-      <AdminAnalyticsCharts initialSummary={summary} />
+      <h1 className="text-foreground text-2xl font-bold">통계 분석</h1>
+      <AdminAnalyticsChartsLoader initialSummary={summary} />
     </div>
   );
 }
