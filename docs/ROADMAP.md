@@ -134,14 +134,18 @@ Gather는 5-30명 규모의 소규모 이벤트 주최자와 참여자를 위한
   - ✅ Playwright MCP를 활용한 인증 플로우 E2E 테스트 — `docs/testing/task-008-auth-flow-test.md`에 기록. Google OAuth 완주는 외부 서비스라 자동화 범위 밖, 리다이렉트/권한 분기 로직만 검증
   - ⚠️ **미검증 항목**: `role: admin` 계정으로 관리자 페이지 정상 진입하는 성공 경로는 실제 관리자 계정 부재로 미검증 (role 불일치 거부 경로는 실계정으로 검증 완료)
 
-- **Task 009: 이벤트 CRUD 및 초대 시스템**
-  - 이벤트 생성 API 구현 (F001)
-  - 초대 코드 자동 생성 로직 구현 (F002)
-  - 이벤트 수정/삭제 API 구현 (F006)
-  - 커버 이미지 업로드 기능 구현 (F009)
-  - 초대 링크 공유 기능 구현 (카카오톡, 클립보드) (F003)
-  - 이벤트 상태 자동 관리 로직 구현 (F008)
-  - Playwright MCP를 활용한 이벤트 생성/수정/삭제 테스트
+- **Task 009: 이벤트 CRUD 및 초대 시스템** ✅ - 완료 (2026-08-21)
+  - ✅ 이벤트 생성 API 구현 (F001) — `lib/actions/events.ts`의 `createEvent`
+  - ✅ 초대 코드 자동 생성 로직 구현 (F002) — `lib/invite-code.ts`, URL-safe 8자리(혼동 문자 제외)
+  - ✅ 이벤트 수정/삭제 API 구현 (F006) — `updateEvent`/`deleteEvent`, RLS와 별개로 `created_by` 소유권 이중 체크
+  - ✅ 커버 이미지 업로드 기능 구현 (F009) — `event-covers` 버킷 업로드 연동
+  - ✅ 초대 링크 공유 기능 구현 (F003) — 기존 클립보드 복사 + `navigator.share`(모바일에서 카카오톡 포함 공유 시트) 그대로 유지, 카카오 SDK 전용 연동은 외부 앱키 발급이 필요해 범위 밖으로 결정
+  - ✅ 이벤트 상태 자동 관리 로직 구현 (F008) — `lib/event-status.ts`, DB에 저장하지 않고 조회 시점마다 `event_date` 기준 파생 계산 (당일=진행중 규칙)
+  - ⚠️ **범위 확장**: 원래 CRUD 쓰기만 계획했으나, 실제 이벤트를 만들면 목업 목록/상세에는 반영되지 않아 기능이 어색해지는 문제로 조회(`lib/queries/events.ts`)까지 함께 실제 DB로 전환. `events/page.tsx`, `events/[id]`, `join/[invite_code]` 모두 실 데이터 연동
+  - ⚠️ **범위 확장**: `lib/types/domain.ts`를 Task 007 DB 스키마 기반으로 교체(Task 007에서 보류했던 항목). `User.name`이 nullable로 바뀌며 `participant-card.tsx`, `profile-form.tsx`에 null-safe 처리 추가
+  - ⚠️ **범위 확장**: `profile/page.tsx`의 목업 `currentMockUser`를 실제 세션 사용자 조회(`lib/queries/profile.ts`)로 전환, `ProfileForm`의 `TODO(Task 008)`로 잘못 남아있던 프로필 수정 API도 함께 연동
+  - ✅ Playwright MCP를 활용한 이벤트 생성/수정/삭제 테스트 — 브라우저(Chrome 확장 세션)로 생성→조회→수정→초대링크→삭제 전체 사이클을 실계정으로 직접 검증. `datetime-local` 인풋은 Chrome 자동화의 `type` 액션이 세그먼트 입력을 지원하지 않아 JS로 값을 직접 설정해 우회
+  - ⚠️ **미착수**: `event_participants` 쓰기(실제 참여 로직)는 Task 010 범위로 명확히 분리, 조회만 이번에 연동함
 
 - **Task 010: 참여자 관리**
   - 초대 링크 참여 로직 구현 (F004)
