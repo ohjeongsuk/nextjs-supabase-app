@@ -1,6 +1,7 @@
 import { CalendarDays, MapPin } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
 import { EventHostActions } from "@/components/event-host-actions";
 import { InviteShareButton } from "@/components/invite-share-button";
@@ -18,7 +19,7 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-export default async function EventDetailPage({ params }: Props) {
+async function EventDetailContent({ params }: Props) {
   const { id } = await params;
   const event = getMockEventById(id);
 
@@ -75,7 +76,7 @@ export default async function EventDetailPage({ params }: Props) {
           )}
         </div>
 
-        <InviteShareButton inviteCode={event.invite_code} />
+        {isHost && <InviteShareButton inviteCode={event.invite_code} />}
 
         <div>
           <h2 className="mb-2 font-semibold text-foreground">
@@ -91,5 +92,13 @@ export default async function EventDetailPage({ params }: Props) {
         {isHost && <EventHostActions eventId={event.id} />}
       </div>
     </div>
+  );
+}
+
+export default function EventDetailPage({ params }: Props) {
+  return (
+    <Suspense>
+      <EventDetailContent params={params} />
+    </Suspense>
   );
 }

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { EditEventForm } from "@/components/edit-event-form";
 import { getMockEventById } from "@/lib/mock/events";
 
@@ -12,7 +13,7 @@ function toDatetimeLocalValue(isoString: string) {
   return new Date(date.getTime() - offsetMs).toISOString().slice(0, 16);
 }
 
-export default async function EditEventPage({ params }: Props) {
+async function EditEventContent({ params }: Props) {
   const { id } = await params;
   const event = getMockEventById(id);
 
@@ -34,5 +35,13 @@ export default async function EditEventPage({ params }: Props) {
         }}
       />
     </div>
+  );
+}
+
+export default function EditEventPage({ params }: Props) {
+  return (
+    <Suspense>
+      <EditEventContent params={params} />
+    </Suspense>
   );
 }
